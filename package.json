@@ -1,0 +1,20 @@
+{
+	"name": "n",
+	"version": "1.0.0",
+	"description": "take notes",
+	"main": "main.js",
+	"scripts": {
+		"start": "electron .",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "chee <chee@snoot.club>",
+	"license": "ISC",
+	"devDependencies": {
+		"electron": "^4.0.7",
+		"electron-builder": "^20.38.5"
+	},
+	"build": {
+		"appId": "public.app-category.productivity"
+	}
+}

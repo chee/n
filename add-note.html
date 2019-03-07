@@ -1,0 +1,42 @@
+<!doctype html>
+
+<style>
+html, body {
+	margin: 0;
+	overflow: hidden;
+}
+
+form {
+	display: flex;
+}
+
+input {
+	flex: 1;
+	font-size: 72px;
+	padding: 5px;
+	color: #333;
+	font-family: avenir next;
+	outline: none;
+}
+</style>
+
+<body hidden>
+<form id="form">
+	<input id="input" autofocus>
+	<submit hidden></submit>
+</form>
+
+<script>
+let electron = require("electron")
+
+document.getElementById("form").addEventListener("submit", event => {
+	electron.ipcRenderer.send(
+		"add-note",
+		document.getElementById("input").value
+	)
+
+	event.preventDefault()
+})
+
+document.body.removeAttribute("hidden")
+</script>

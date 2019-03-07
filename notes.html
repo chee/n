@@ -1,0 +1,93 @@
+<style>
+	html, body {
+		margin: 0;
+	}
+	body {
+		font-family: avenir next;
+		font-size: 36px;
+		color: #222;
+		padding: 1em;
+	}
+	ul {
+		list-style-type: none;
+		padding: 0;
+		line-height: 1.5;
+	}
+	[type="checkbox"] {
+		vertical-align: middle;
+		margin-right: 10px;
+	}
+	:checked + label {
+		text-decoration: line-through;
+		color: #2222;
+	}
+</style>
+<body hidden>
+<main id="main" role="main">
+	<ul id="ul">
+
+	</ul>
+</main>
+<script>
+	let main = document.getElementById("main")
+
+	let fs = require("fs")
+	let os = require("os")
+	let electron = require("electron")
+	let notesFile = os.homedir() + "/notes"
+
+	let notes = fs.readFileSync(notesFile, "utf-8")
+		.split("\n")
+		.filter(Boolean)
+
+	function deleteNotes (checkies) {
+		let filtered = notes.filter((note, index) => {
+			return !checkies[index].checked
+		})
+
+		fs.writeFileSync(notesFile, filtered.join("\n") + "\n")
+	}
+
+	function toggleNote (event) {
+		let {index} = event.target
+		let checky = event.target.querySelector("[type=\"checkbox\"]")
+		checky.checked = !checky.checked
+	}
+
+	function render (notes) {
+		let ul = document.createElement("ul")
+		ul.id = "ul"
+		if (notes.length) {
+			notes.forEach((note, index) => {
+				let li = document.createElement("li")
+				let checky = document.createElement("input")
+				checky.type = "checkbox"
+				checky.id = `checky-${index}`
+				let label = document.createElement("label")
+				label.setAttribute("for", checky.id)
+				label.textContent = note
+				li.prepend(checky)
+				li.append(label)
+				li.index = index
+				li.addEventListener("click", toggleNote)
+				ul.appendChild(li)
+			})
+		}
+		let old = document.getElementById("ul")
+		main.replaceChild(ul, old)
+	}
+
+	let askToBeClosed = () =>
+		electron.ipcRenderer("please-close-notes")
+
+	window.addEventListener("beforeunload", event => {
+		event.preventDefault()
+		deleteNotes(document.querySelectorAll("[type=\"checkbox\"]"))
+		askToBeClosed()
+		return true
+	})
+
+	render(notes)
+
+	document.body.removeAttribute("hidden")
+</script>
