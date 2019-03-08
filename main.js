@@ -42,13 +42,20 @@ function showNotes () {
 }
 
 app.on("ready", () => {
+	app.dock.hide()
+
 	window = new BrowserWindow({
 		width: 800,
 		height: 100,
-		frame: false,
 		resizable: false,
-		show: false
+		show: false,
+		titleBarStyle: "customButtonsOnHover",
+		frame: false
 	})
+
+	window.setAlwaysOnTop(true, "floating")
+	window.setVisibleOnAllWorkspaces(true)
+	window.setFullScreenable(false)
 
 	window.webContents.on("before-input-event", (event, input) => {
 		if (input.key == "Enter" || input.key == "Escape") {
